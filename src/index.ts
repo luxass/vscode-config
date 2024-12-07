@@ -4,30 +4,15 @@ export interface ConfigOptions {
   section: string;
 }
 
-export interface Config<TConfig extends Record<string, unknown>> {
-  get: (() => TConfig) & (<TKey extends Path<TConfig>>(
-    key: TKey,
-    scope?: ConfigurationScope | null,
-  ) => PathValue<TConfig, TKey>) & (<TKey extends Path<TConfig>>(
-    key: TKey,
-    scope: ConfigurationScope | null | undefined,
-    defaultValue: NonNullable<PathValue<TConfig, TKey>>,
-  ) => PathValue<TConfig, TKey>);
+export type Configuration<TConfig extends Record<string, any>> = ConfigurationManager<TConfig>;
 
-  set: <TKey extends Path<TConfig>>(
-    key: TKey,
-    value: PathValue<TConfig, TKey>,
-    target: ConfigurationTarget
-  ) => Thenable<void>;
-}
-
-export function createConfig<TConfig extends Record<string, unknown>>(
+export function createConfig<TConfig extends Record<string, any>>(
   options: ConfigOptions,
-): Config<TConfig> {
-  return new Configuration<TConfig>(options);
+): Configuration<TConfig> {
+  return new ConfigurationManager<TConfig>(options);
 }
 
-class Configuration<TConfig extends Record<string, unknown>> implements Config<TConfig> {
+class ConfigurationManager<TConfig extends Record<string, any>> {
   constructor(private readonly options: ConfigOptions) { }
 
   get(): TConfig;

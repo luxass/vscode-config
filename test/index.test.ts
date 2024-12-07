@@ -32,7 +32,7 @@ const mockConfiguration = mockVscode.workspace.getConfiguration() as unknown as 
   update: ReturnType<typeof vi.fn>;
 };
 
-interface TestConfig extends Record<string, unknown> {
+interface TestConfig {
   foo: string;
   bar: {
     baz: number;
@@ -40,13 +40,13 @@ interface TestConfig extends Record<string, unknown> {
   };
 }
 
-const testConfig: TestConfig = {
+const testConfig = {
   foo: "test",
   bar: {
     baz: 42,
     qux: true,
   },
-};
+} satisfies TestConfig;
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -54,11 +54,11 @@ beforeEach(() => {
 
 it("should get entire config when no key is provided", () => {
   mockConfiguration.get.mockReturnValueOnce(testConfig);
-
   const config = createConfig<TestConfig>({ section: "testSection" });
   const result = config.get();
 
   expect(result).toEqual(testConfig);
+
   expect(mockVscode.workspace.getConfiguration).toHaveBeenCalledWith();
   expect(mockConfiguration.get).toHaveBeenCalledWith("testSection");
 });
@@ -110,9 +110,16 @@ it("should get config value with default value", () => {
 
 it("should update config value", async () => {
   mockConfiguration.update.mockResolvedValueOnce(undefined);
-
+  mockConfiguration.get
+    .mockReturnValueOnce("test")
+    .mockReturnValueOnce("newValue");
   const config = createConfig<TestConfig>({ section: "testSection" });
+
+  expect(config.get("foo")).toBe("test");
+
   await config.set("foo", "newValue", 1 as ConfigurationTarget);
+
+  expect(config.get("foo")).toBe("newValue");
 
   expect(mockVscode.workspace.getConfiguration).toHaveBeenCalledWith("testSection");
   expect(mockConfiguration.update).toHaveBeenCalledWith("foo", "newValue", 1);
@@ -120,10 +127,14 @@ it("should update config value", async () => {
 
 it("should update nested config value", async () => {
   mockConfiguration.update.mockResolvedValueOnce(undefined);
+  mockConfiguration.get.mockReturnValueOnce(42).mockReturnValueOnce(100);
 
   const config = createConfig<TestConfig>({ section: "testSection" });
+
+  expect(config.get("bar.baz")).toBe(42);
   await config.set("bar.baz", 100, 2 as ConfigurationTarget);
 
+  expect(config.get("bar.baz")).toBe(100);
   expect(mockVscode.workspace.getConfiguration).toHaveBeenCalledWith("testSection");
   expect(mockConfiguration.update).toHaveBeenCalledWith("bar.baz", 100, 2);
 });
