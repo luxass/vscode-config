@@ -52,13 +52,13 @@
     "@types/vscode": ">=1.70.0"
   },
   "devDependencies": {
-    "@luxass/eslint-config": "^4.14.0",
-    "@types/node": "^22.0.0",
-    "@types/vscode": "^1.95.0",
+    "@luxass/eslint-config": "4.19.0",
+    "@types/node": "22.17.0",
+    "@types/vscode": "1.102.0",
     "eslint": "^9.16.0",
     "eslint-plugin-format": "^1.0.0",
-    "tsup": "^8.3.5",
-    "typescript": "^5.7.2",
+    "tsup": "8.5.0",
+    "typescript": "5.8.3",
     "vitest": "^3.0.0"
   }
 }
