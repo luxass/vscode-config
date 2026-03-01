@@ -55,7 +55,7 @@
     "@luxass/eslint-config": "4.19.0",
     "@types/node": "22.19.0",
     "@types/vscode": "1.105.0",
-    "eslint": "9.26.0",
+    "eslint": "10.0.1",
     "eslint-plugin-format": "1.0.1",
     "tsup": "8.5.0",
     "typescript": "5.9.3",
